@@ -13,7 +13,7 @@ if (!in_array($tab, ['home', 'recruitment', 'admin'], true)) {
 $flash = '';
 $flashType = 'success';
 
-// ---------- Handle aksi admin (buka / tutup recruitment) ----------
+// ---------- Handle admin actions (open / close recruitment) ----------
 if ($tab === 'admin' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     require_admin();
     $pdo = get_db();
@@ -26,19 +26,19 @@ if ($tab === 'admin' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $openUntil = trim($_POST['open_until'] ?? '');
 
         if ($position === '' || $applyLink === '' || $openUntil === '') {
-            $flash = 'Jabatan, link apply, dan tanggal tutup wajib diisi.';
+            $flash = 'Position, apply link, and closing date are required.';
             $flashType = 'error';
         } else {
             $stmt = $pdo->prepare("INSERT INTO recruitment (position, description, apply_link, open_until, is_open, created_by) VALUES (?, ?, ?, ?, 1, ?)");
             $stmt->execute([$position, $description, $applyLink, $openUntil, $_SESSION['username']]);
-            $flash = 'Recruitment baru berhasil dibuka.';
+            $flash = 'New recruitment post opened successfully.';
             $flashType = 'success';
         }
     } elseif ($action === 'close_recruitment') {
         $id = (int)($_POST['id'] ?? 0);
         $stmt = $pdo->prepare("UPDATE recruitment SET is_open = 0 WHERE id = ?");
         $stmt->execute([$id]);
-        $flash = 'Recruitment ditutup.';
+        $flash = 'Recruitment post closed.';
         $flashType = 'success';
     }
 }
@@ -55,7 +55,7 @@ require_once __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <?php if (isset($_GET['err']) && $_GET['err'] === 'forbidden'): ?>
-  <div class="alert alert-error">Kamu tidak punya akses ke halaman itu.</div>
+  <div class="alert alert-error">You do not have access to that page.</div>
 <?php endif; ?>
 
 <?php if ($tab === 'home'): ?>
